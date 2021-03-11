@@ -1,10 +1,4 @@
-Sample Module Repository
+Desarrollo de ejercicios propuestos en Optimization in Electrical Engineering de Mohammad Fathi
 ========================
 
-This simple project is an example repo for Python projects.
-
-`Learn more <http://www.kennethreitz.org/essays/repository-structure-and-python>`_.
-
----------------
-
-If you want to learn more about ``setup.py`` files, check out `this repository <https://github.com/kennethreitz/setup.py>`_.
+Este repositorio contiene cuadernos de collab resolviendo los ejercicios planteados en el libro «Optimization in Electrical Engineering de Mohammad Fathi». Además, se incluyen módulos de python que facilitan la legibilidad de los cuadernos.
