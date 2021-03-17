@@ -22,15 +22,3 @@ def diagonalize(A):
     eigenvalues_of_A, eigenvectors_of_A = np.linalg.eig(A)    
     diagonal_matrix = np.diagflat(eigenvalues_of_A)
     return diagonal_matrix, eigenvectors_of_A
-
-def lin_indep(matrix):
-    eps = np.finfo(np.linalg.norm(matrix).dtype).eps
-    tol = max(eps*np.array(matrix.shape))
-
-    U, S, V = np.linalg.svd(matrix)
-
-    if np.sum(S > tol):
-        lin_indep_flag = True
-    else:
-        lin_indep_flag = False
-    return lin_indep_flag
