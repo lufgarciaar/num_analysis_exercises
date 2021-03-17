@@ -27,9 +27,9 @@ def lin_indep(matrix):
     eps = np.finfo(np.linalg.norm(matrix).dtype).eps
     tol = max(eps*np.array(matrix.shape))
 
-    u, s, v = np.linalg.svd(matrix)
+    U, S, V = np.linalg.svd(matrix)
 
-    if np.sum(s > tol):
+    if np.sum(S > tol):
         lin_indep_flag = True
     else:
         lin_indep_flag = False
