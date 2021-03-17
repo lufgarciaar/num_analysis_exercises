@@ -1,6 +1,6 @@
 import numpy as np
 
-def linear_solutions(augmented_matrix):
+def lin_sol(augmented_matrix):
     
     matrix = augmented_matrix[:, 0:-1]
     
@@ -17,3 +17,8 @@ def linear_solutions(augmented_matrix):
     
     else:
         return 'infinite solutions'
+
+def diagonalize(A):
+    eigenvalues_of_A, eigenvectors_of_A = np.linalg.eig(A)    
+    diagonal_matrix = np.diagflat(eigenvalues_of_A)
+    return diagonal_matrix, eigenvectors_of_A
