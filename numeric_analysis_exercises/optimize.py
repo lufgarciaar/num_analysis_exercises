@@ -5,8 +5,8 @@ import random
 
 from sympy.core.sympify import sympify
 
-def steepest_descent(func, vars, /, start=None, *,
- err=0.001, max_iter=1000, xrange=(-1, 1), yrange=(-1, 1), full_output=False):
+def steepest_descent(func, vars, /, start=(0, 0), *,
+ err=0.001, max_iter=1000, full_output=False):
     """
     Compute Steepest DescentMethod.
 
@@ -39,19 +39,14 @@ def steepest_descent(func, vars, /, start=None, *,
             Every point evaluated by the algorithm.
     """
     
-    x1, x2 = vars
-    
-    grad = sp.derive_by_array(func, [x1, x2])
+    point_range=(-1, 1)
 
-    function = sp.lambdify([x1, x2], func, modules='numpy')
-    gradient = sp.lambdify([x1, x2], grad, modules='numpy')
+    grad = sp.derive_by_array(func, [*vars])
 
-    if start is None:
-        start_x = random.uniform(xrange[0], xrange[1])
-        start_y = random.uniform(yrange[0], yrange[1])
-        start = array([start_x, start_y])
-    else:
-        start = array(start)
+    function = sp.lambdify([*vars], func, modules='numpy')
+    gradient = sp.lambdify([*vars], grad, modules='numpy')
+
+    start = array(start)
 
     opt_boundaries = (0, 10)
     alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, start,))
