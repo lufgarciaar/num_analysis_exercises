@@ -6,7 +6,7 @@ import random
 from sympy.core.sympify import sympify
 
 def steepest_descent(func, vars, /, start=(0, 0), *,
- err=0.001, max_iter=1000, stop_criteria='sc_diff', full_output=False):
+ err=0.001, max_iter=1000, stop_criteria='sc_diff', step_type='opt', step=0.1, full_output=False):
     """
     Compute Steepest DescentMethod.
 
@@ -28,6 +28,16 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
             Target error desired.
         max_iter: int, optional.
             Maximum number of iterations.
+        stop_criteria: {'sc_diff', 'gradient', 'abs_diff'}, optional.
+            'sc_diff':
+                Check if the normalized func evaluated in the last point
+                is less than err.
+            'gradient':
+                Check if the norm of the gradient in the last point is
+                less than err.
+            'abs_diff':
+                Check if the difference between the function evaluated
+                in the previous and the last point is less than err.
         full_output: boolean, optional.
             False: returns only minimum point.
             True: returns minimum and steps.
@@ -42,6 +52,9 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
     if not stop_criteria in ['sc_diff', 'gradient', 'abs_diff']:
       raise ValueError("stop_criteria is one of 'sc_diff', 'gradient', 'abs_diff'")
 
+    if not step_type in ['opt', 'fix']:
+      raise ValueError("step_type is one of 'opt', 'fix'")
+
     grad = sp.derive_by_array(func, [*vars])
 
     function = sp.lambdify([*vars], func, modules='numpy')
@@ -50,7 +63,12 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
     start = array(start)
 
     opt_boundaries = (0, 10)
-    alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, start,))
+
+    if step_type == 'opt':
+        alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, start,))
+    if step_type == 'fix':
+        alpha = step
+
     opt_point = start - alpha*array(gradient(*start))
     stop_flag = term_criterion(function, start, opt_point, criteria=stop_criteria, err=err)
 
@@ -60,7 +78,10 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
     iter = 1
 
     while not (stop_flag):
-        alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, prev_point,))
+        if step_type == 'opt':
+            alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, prev_point,))
+        if step_type == 'fix':
+            alpha = step
         opt_point = prev_point - alpha*array(gradient(*prev_point))
         stop_flag = term_criterion(function, prev_point, opt_point, criteria=stop_criteria, err=err)
 
