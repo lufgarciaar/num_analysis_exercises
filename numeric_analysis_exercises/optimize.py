@@ -89,6 +89,9 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
         points = vstack((points, opt_point))
         prev_point = opt_point
 
+        if iter>=max_iter:
+            stop_flag = True
+
     if full_output:
         return opt_point, points
     else:
