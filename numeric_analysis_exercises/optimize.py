@@ -85,10 +85,10 @@ def term_criterion(function, prev_point, new_point,*, criteria='sc_diff', err=0.
         tol = scaled_difference(function, prev_point, new_point)
 
     if criteria == 'gradient':
-        tol = grad_criteria(function, prev_point, new_point)
+        tol = grad_criteria(function, new_point)
 
     if criteria == 'abs_diff':
-        tol = scaled_difference(function, prev_point, new_point)
+        tol = absolute_difference(function, prev_point, new_point)
 
     if tol < err:
         criteria_flag = True
@@ -106,3 +106,7 @@ def grad_criteria(grad, point):
     eval_grad = array(grad(*point))
     grad_norm = linalg.norm(eval_grad)
     return grad_norm
+
+def absolute_difference(func, prev_point, new_point):
+    iter_difference = linalg.norm(array(func(*new_point))-array(func(*prev_point)))
+    return iter_difference
