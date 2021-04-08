@@ -6,7 +6,7 @@ import random
 from sympy.core.sympify import sympify
 
 def steepest_descent(func, vars, /, start=(0, 0), *,
- err=0.001, max_iter=1000, full_output=False):
+ err=0.001, max_iter=1000, stop_criteria='sc_diff', full_output=False):
     """
     Compute Steepest DescentMethod.
 
@@ -39,7 +39,8 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
             Every point evaluated by the algorithm.
     """
     
-    point_range=(-1, 1)
+    if not stop_criteria in ['sc_diff', 'gradient', 'abs_diff']:
+      raise ValueError("stop_criteria is one of 'sc_diff', 'gradient', 'abs_diff'")
 
     grad = sp.derive_by_array(func, [*vars])
 
@@ -51,12 +52,7 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
     opt_boundaries = (0, 10)
     alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, start,))
     opt_point = start - alpha*array(gradient(*start))
-    tol = scaled_difference(function, start, opt_point)
-
-    if tol < err:
-        stop_flag = True
-    else:
-        stop_flag = False
+    stop_flag = term_criterion(function, start, opt_point, criteria=stop_criteria, err=err)
 
     points = start
     points = vstack((points, opt_point))
@@ -66,10 +62,7 @@ def steepest_descent(func, vars, /, start=(0, 0), *,
     while not (stop_flag):
         alpha = opt.fminbound(phi, *opt_boundaries, args=(function, gradient, prev_point,))
         opt_point = prev_point - alpha*array(gradient(*prev_point))
-
-        tol = scaled_difference(function, prev_point, opt_point)
-        if tol < err:
-            stop_flag = True
+        stop_flag = term_criterion(function, prev_point, opt_point, criteria=stop_criteria, err=err)
 
         iter +=1
         points = vstack((points, opt_point))
@@ -86,7 +79,30 @@ def phi(alpha, function, gradient, point):
     eval_phi = array(function(*arg))
     return eval_phi
 
+def term_criterion(function, prev_point, new_point,*, criteria='sc_diff', err=0.001):
+    
+    if criteria == 'sc_diff':
+        tol = scaled_difference(function, prev_point, new_point)
+
+    if criteria == 'gradient':
+        tol = grad_criteria(function, prev_point, new_point)
+
+    if criteria == 'abs_diff':
+        tol = scaled_difference(function, prev_point, new_point)
+
+    if tol < err:
+        criteria_flag = True
+    else:
+        criteria_flag = False
+        
+    return criteria_flag
+
 def scaled_difference(func, prev_point, new_point):
     iter_difference = linalg.norm(array(func(*new_point))-array(func(*prev_point)))
     scl_diff = iter_difference/max(1, linalg.norm(array(func(*prev_point)))) 
     return scl_diff
+
+def grad_criteria(grad, point):
+    eval_grad = array(grad(*point))
+    grad_norm = linalg.norm(eval_grad)
+    return grad_norm
