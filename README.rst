@@ -9,7 +9,7 @@ https://drive.google.com/file/d/19bFeHKqBRpI4IJB0OOWeKnpq62DlA2S7/view?usp=shari
 
 ## Capítulo 3
 
-https://drive.google.com/file/d/19ce1wjJa8Q4nRB9dfPbkaMzj2DbB0_N4/view?usp=sharing
+https://drive.google.com/file/d/1mErkqyA7rXGFjUK7VYXfnjAZpI8zg9HY/view?usp=sharing
 
 ## Ejemplos de uso de steepest descend method
 
